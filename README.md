@@ -46,6 +46,11 @@ cargo run -p png-sweeper
 新しいツールを追加する場合：
 
 1. 新しいディレクトリを作成
+
+```bash
+cargo new --bin your-tools
+```
+
 2. `Cargo.toml`の`[workspace]`セクションの`members`配列に追加
 3. 各ツールは独立したRustパッケージとして管理
 
