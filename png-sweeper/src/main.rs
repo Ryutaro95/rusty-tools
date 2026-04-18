@@ -82,12 +82,37 @@ fn find_png_files(desktop_path: &Path) -> io::Result<Vec<PathBuf>> {
     Ok(png_files)
 }
 
+fn resolve_target_path(target_dir: &Path, file_name: &std::ffi::OsStr) -> PathBuf {
+    let base = target_dir.join(file_name);
+    if !base.exists() {
+        return base;
+    }
+
+    let stem = Path::new(file_name)
+        .file_stem()
+        .unwrap_or(file_name)
+        .to_string_lossy();
+    let ext = Path::new(file_name)
+        .extension()
+        .map(|e| format!(".{}", e.to_string_lossy()))
+        .unwrap_or_default();
+
+    let mut counter = 1u32;
+    loop {
+        let candidate = target_dir.join(format!("{stem}_{counter}{ext}"));
+        if !candidate.exists() {
+            return candidate;
+        }
+        counter += 1;
+    }
+}
+
 fn move_file(source: &Path, target_dir: &Path) -> io::Result<()> {
     let file_name = source
         .file_name()
         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "ファイル名が取得できません"))?;
 
-    let target_path = target_dir.join(file_name);
+    let target_path = resolve_target_path(target_dir, file_name);
 
     fs::rename(source, &target_path)?;
     println!(
