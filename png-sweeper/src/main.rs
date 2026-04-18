@@ -65,7 +65,7 @@ fn find_png_files(desktop_path: &Path) -> io::Result<Vec<PathBuf>> {
 
         if path.is_file() {
             if let Some(extension) = path.extension() {
-                if extension.to_string_lossy().to_lowercase() == "png" {
+                if extension.eq_ignore_ascii_case("png") {
                     png_files.push(path);
                 }
             }
