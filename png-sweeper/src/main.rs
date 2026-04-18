@@ -26,16 +26,18 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
+fn home_dir() -> io::Result<PathBuf> {
+    env::var("HOME")
+        .map(PathBuf::from)
+        .map_err(|_| io::Error::new(io::ErrorKind::NotFound, "HOME環境変数が見つかりません"))
+}
+
 fn get_desktop_path() -> io::Result<PathBuf> {
-    let home = env::var("HOME")
-        .map_err(|_| io::Error::new(io::ErrorKind::NotFound, "HOME環境変数が見つかりません"))?;
-    Ok(Path::new(&home).join("Desktop"))
+    Ok(home_dir()?.join("Desktop"))
 }
 
 fn get_target_directory() -> io::Result<PathBuf> {
-    let home = env::var("HOME")
-        .map_err(|_| io::Error::new(io::ErrorKind::NotFound, "HOME環境変数が見つかりません"))?;
-    Ok(Path::new(&home).join("Pictures").join("ScreenShot"))
+    Ok(home_dir()?.join("Pictures").join("ScreenShot"))
 }
 
 fn ensure_target_directory(target_dir: &Path) -> io::Result<()> {
