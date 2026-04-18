@@ -16,13 +16,18 @@ fn main() -> io::Result<()> {
         return Ok(());
     }
 
-    println!("{}個のPNGファイルを移動します...", png_files.len());
+    let total = png_files.len();
+    println!("{}個のPNGファイルを移動します...", total);
 
-    for file in png_files {
-        move_file(&file, &target_dir)?;
+    let mut moved = 0;
+    for file in &png_files {
+        match move_file(file, &target_dir) {
+            Ok(()) => moved += 1,
+            Err(e) => eprintln!("スキップ: {} ({})", file.display(), e),
+        }
     }
 
-    println!("すべてのPNGファイルの移動が完了しました。");
+    println!("完了: {}/{}個のファイルを移動しました。", moved, total);
     Ok(())
 }
 
