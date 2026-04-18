@@ -1,2 +1,8 @@
 [workspace]
 members = ["png-sweeper"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+authors = ["Ryutaro"]
