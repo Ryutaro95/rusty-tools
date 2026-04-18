@@ -4,10 +4,14 @@ use std::io;
 use std::path::{Path, PathBuf};
 
 fn main() -> io::Result<()> {
+    let dry_run = env::args().any(|arg| arg == "--dry-run");
+
     let desktop_path = get_desktop_path()?;
     let target_dir = get_target_directory()?;
 
-    ensure_target_directory(&target_dir)?;
+    if !dry_run {
+        ensure_target_directory(&target_dir)?;
+    }
 
     let png_files = find_png_files(&desktop_path)?;
 
@@ -17,6 +21,15 @@ fn main() -> io::Result<()> {
     }
 
     let total = png_files.len();
+
+    if dry_run {
+        println!("[dry-run] {}個のPNGファイルが移動対象です:", total);
+        for file in &png_files {
+            println!("  {}", file.display());
+        }
+        return Ok(());
+    }
+
     println!("{}個のPNGファイルを移動します...", total);
 
     let mut moved = 0;
